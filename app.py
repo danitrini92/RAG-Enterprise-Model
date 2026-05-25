@@ -21,7 +21,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── API Key — hardcoded ──
-GROQ_API_KEY = "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"  # ← paste your real Groq key here
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
 # ── Session state ──
 if "chat_history" not in st.session_state:
