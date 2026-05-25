@@ -138,7 +138,7 @@ if st.session_state.rag_chain is None:
             st.session_state.retriever = retriever
     except Exception as e:
         st.error(f"❌ Setup failed: {str(e)}")
-        st.stop():
+        st.stop()
         embeddings = load_embeddings()
         splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         chunks = splitter.split_documents(SAMPLE_DOCS)
