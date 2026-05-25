@@ -127,7 +127,18 @@ Increments: Processed in January.""",
 
 # ── Auto-build knowledge base on first load ──
 if st.session_state.rag_chain is None:
-    with st.spinner("⚙️ Setting up knowledge base, please wait..."):
+    try:
+        with st.spinner("⚙️ Setting up knowledge base, please wait..."):
+            embeddings = load_embeddings()
+            splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+            chunks = splitter.split_documents(SAMPLE_DOCS)
+            vs = FAISS.from_documents(chunks, embeddings)
+            chain, retriever = build_rag_chain(vs)
+            st.session_state.rag_chain = chain
+            st.session_state.retriever = retriever
+    except Exception as e:
+        st.error(f"❌ Setup failed: {str(e)}")
+        st.stop():
         embeddings = load_embeddings()
         splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         chunks = splitter.split_documents(SAMPLE_DOCS)
