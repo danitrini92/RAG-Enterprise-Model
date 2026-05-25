@@ -208,9 +208,21 @@ if not st.session_state.chat_history:
         "What is the sick leave policy?",
     ]
     for i, q in enumerate(qs):
-        if cols[i % 2].button(q, use_container_width=True):
-            st.session_state.chat_history.append({"role": "user", "content": q})
-            st.rerun()
+    if cols[i % 2].button(q, use_container_width=True):
+        st.session_state.chat_history.append({"role": "user", "content": q})
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                answer = st.session_state.rag_chain.invoke(q)
+                docs = st.session_state.retriever.invoke(q)
+                sources = list({d.metadata.get("source", "Unknown") for d in docs})
+            st.markdown(answer)
+            if sources:
+                st.info("📚 Sources: " + ", ".join(sources))
+            st.session_state.chat_history.append({
+                "role": "assistant",
+                "content": answer + f"\n\n📚 Sources: {', '.join(sources)}"
+            })
+        st.rerun()
 
 for msg in st.session_state.chat_history:
     with st.chat_message(msg["role"]):
